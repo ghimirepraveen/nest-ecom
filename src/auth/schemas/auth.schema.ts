@@ -6,6 +6,9 @@ export type AuthDocument = HydratedDocument<Auth>;
 
 @Schema({ timestamps: true })
 export class Auth {
+  @Prop({ required: true })
+  fullName!: string;
+
   @Prop({ required: true, unique: true, index: true })
   email!: string;
 
