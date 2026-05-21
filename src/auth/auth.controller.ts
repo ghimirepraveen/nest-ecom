@@ -11,8 +11,10 @@ import { Request } from 'express';
 import { AuthService } from './auth.service';
 import { CreateAuthDto } from './dto/create-auth.dto';
 import { LoginAuthDto } from './dto/login-aut.dto';
+import { VerifyOtpAuthDto } from './dto/verifyOtp-auth.dto';
 import { JwtAuthGuard } from './guards/jwt-auth.guard';
 import { JwtRefreshAuthGuard } from './guards/jwt-refresh-auth.guard';
+import { SendOtpAuthDto } from './dto/sendOtp-auth.dto';
 
 type JwtRequest = Request & {
   user: {
@@ -35,6 +37,11 @@ export class AuthController {
     return this.authService.login(loginAuthDto);
   }
 
+  @Post('verify-email')
+  verify(@Body() verifyOtpAuthDto: VerifyOtpAuthDto) {
+    return this.authService.verifyOtp(verifyOtpAuthDto);
+  }
+
   @Post('refresh')
   @UseGuards(JwtRefreshAuthGuard)
   refresh(@Req() req: JwtRequest) {
@@ -54,5 +61,10 @@ export class AuthController {
   @UseGuards(JwtAuthGuard)
   profile(@Req() req: JwtRequest) {
     return this.authService.profile(req.user.sub);
+  }
+
+  @Post('send-otp')
+  sendOtp(@Body() sendOtpAuthDto: SendOtpAuthDto) {
+    return this.authService.sendOtp(sendOtpAuthDto);
   }
 }

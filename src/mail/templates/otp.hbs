@@ -1,0 +1,16 @@
+
+// this can be mannage by creating a new module mailtemplates fetched
+dynamically from the database and then render the template with the data and
+then send the email to the user
+
+<html>
+  <body>
+    <p>Hi {{email}},</p>
+    <p>Your verification code is:</p>
+    <h2 style='letter-spacing:4px'>{{otp}}</h2>
+    <p>This code will expire in {{expiresIn}} minutes.</p>
+    <p>If you didn't request this, please ignore this email.</p>
+    <hr />
+    <p>Thanks,<br />The Team</p>
+  </body>
+</html>

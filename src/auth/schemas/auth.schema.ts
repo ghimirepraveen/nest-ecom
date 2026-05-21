@@ -26,6 +26,15 @@ export class Auth {
 
   @Prop({ enum: Object.values(USERTYPE), default: USERTYPE.CUSTOMER })
   userType!: string;
+
+  @Prop({ required: false })
+  otp?: string;
+
+  @Prop({ required: false, type: Date })
+  otpExpiresAt?: Date;
+
+  @Prop({ default: false })
+  isEmailVerified?: boolean;
 }
 
 export const AuthSchema = SchemaFactory.createForClass(Auth);

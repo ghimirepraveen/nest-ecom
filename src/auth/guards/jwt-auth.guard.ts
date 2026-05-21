@@ -5,21 +5,29 @@ import {
   UnauthorizedException,
 } from '@nestjs/common';
 import { Request } from 'express';
-import { extractBearerToken, verifyJwt } from '../utils/jwt.util';
+import { AuthenticatedUserDetails, AuthService } from '../auth.service';
+import { JwtPayload, extractBearerToken, verifyJwt } from '../utils/jwt.util';
+
+type AuthenticatedRequest = Request & {
+  user?: JwtPayload & Partial<AuthenticatedUserDetails>;
+};
 
 @Injectable()
 export class JwtAuthGuard implements CanActivate {
-  canActivate(context: ExecutionContext): boolean {
-    const request = context
-      .switchToHttp()
-      .getRequest<Request & { user?: unknown }>();
+  constructor(private readonly authService: AuthService) {}
+
+  async canActivate(context: ExecutionContext): Promise<boolean> {
+    const request = context.switchToHttp().getRequest<AuthenticatedRequest>();
 
     try {
       const token = extractBearerToken(request.headers.authorization);
-      request.user = verifyJwt(
+      const payload = verifyJwt(
         token,
         process.env.JWT_ACCESS_SECRET || 'access-secret',
       );
+
+      const userDetails = await this.authService.getUserById(payload.sub);
+      request.user = { ...payload, ...userDetails };
       return true;
     } catch {
       throw new UnauthorizedException('Invalid access token');
